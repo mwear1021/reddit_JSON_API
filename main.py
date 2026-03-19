@@ -25,7 +25,7 @@ def get_subreddit(subreddit):
     return posts
 
 
-print("This is a simple program to return the top 5 posts in a subreddit.\n")
+print("\nThis is a simple program to return the top 5 posts in a subreddit.\n")
 
 while True:
     subreddit = input("Enter a subreddit to see its top posts (or 'exit' to quit): ")
