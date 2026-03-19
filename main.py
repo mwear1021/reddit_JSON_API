@@ -10,7 +10,7 @@ import requests
 
 def get_subreddit(subreddit):
     try:
-        response = requests.get(f"https://www.reddit.com/r/{subreddit}/top.json?limit=3", headers={"User-Agent": "my-app/1.0"})
+        response = requests.get(f"https://www.reddit.com/r/{subreddit}/top.json?limit=5", headers={"User-Agent": "my-app/1.0"})
         if response.status_code == 404:
             raise ValueError(f"Subbreddit '{subreddit} does not exist.")
         response.raise_for_status()
@@ -22,12 +22,18 @@ def get_subreddit(subreddit):
     return posts
 
 
-print(f"This is a simple program to return the top 3 posts in a subreddit.\n")
-subreddit = input("Enter a subbreddit to see its top posts: ")
+print("This is a simple program to return the top 5 posts in a subreddit.\n")
 
-posts = get_subreddit(subreddit)
+while True:
+    subreddit = input("Enter a subreddit to see its top posts (or 'exit' to quit): ")
 
-for post in posts:
-    p = post["data"]
-    print(f"\n-- {p["title"]}, {p["score"]}, {p["url"]}\n")
+    if subreddit.lower() == "exit":
+        print("Goodbye!")
+        break
+
+    posts = get_subreddit(subreddit)
+
+    for post in posts:
+        p = post["data"]
+        print(f"\n-- {p['title']}, {p['score']}, {p['url']}\n")
     
