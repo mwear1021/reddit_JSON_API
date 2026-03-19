@@ -1,24 +1,27 @@
-# Ask the user for a subreddit name
-# Build the URL using Reddit's JSON API (reddit.com/r/{subreddit}.json)
-# Set a custom User-Agent header (Reddit blocks default requests headers)
-# Make the GET request and parse the JSON response
-# Extract the list of posts from the response
-# Loop through and print each post's title, score, and URL
-# Handle errors last (invalid subreddit, network issues, bad response)
+"""
+A simple program to retrieve and display the top 5 posts from a specified subreddit.
+This module uses the Reddit API (via requests) to fetch posts from any subreddit.
+Users can interactively enter subreddit names to view their top posts, including
+the post title, score, and URL. The program continues until the user enters 'exit'.
+Functions:
+    get_subreddit(subreddit): Fetches the top 5 posts from a given subreddit.
+Main:
+    Runs an interactive loop that prompts the user for subreddit input and
+    displays the top 5 posts with their titles, scores, and URLs.
+"""
 
 import requests
 
 def get_subreddit(subreddit):
     try:
         response = requests.get(f"https://www.reddit.com/r/{subreddit}/top.json?limit=5", headers={"User-Agent": "my-app/1.0"})
-        if response.status_code == 404:
-            raise ValueError(f"Subbreddit '{subreddit} does not exist.")
-        response.raise_for_status()
     except requests.RequestException as e:
         raise ConnectionError(f"Network error: {e}")
-    
+
     data = response.json()
     posts = data["data"]["children"]
+    if not posts:
+        raise ValueError(f"Subreddit '{subreddit}' does not exist.")
     return posts
 
 
@@ -31,7 +34,11 @@ while True:
         print("Goodbye!")
         break
 
-    posts = get_subreddit(subreddit)
+    try:
+        posts = get_subreddit(subreddit)
+    except (ValueError, ConnectionError) as e:
+        print(f"Error: {e}")
+        continue
 
     for post in posts:
         p = post["data"]
